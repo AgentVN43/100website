@@ -1,7 +1,7 @@
 import { ConfigProvider } from "antd";
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import Header from "@/components/header";
 import "./globals.css";
+import Header from "./components/header";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

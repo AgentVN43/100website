@@ -4,7 +4,7 @@ import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 export default function Header() {
     return (
         <div className='flex'>
-            <div className=''>
+            <div>
                 <HomeOutlined /> Home
             </div>
             <div className=''>

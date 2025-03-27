@@ -4,6 +4,7 @@ import React from "react";
 import { Table } from "antd";
 import type { TableProps } from "antd";
 import { useRouter } from "next/navigation"; // Nếu dùng App Router
+import ProjectForm from "../components/ProjectForm";
 
 interface DataType {
     id: string;
@@ -87,14 +88,17 @@ const Site: React.FC = () => {
     ];
 
     return (
-        <Table<DataType>
-            columns={columns}
-            dataSource={data}
-            onRow={(record) => ({
-                onClick: () => router.push(`/site/${record.id}`), // Chuyển trang khi click vào row
-                style: { cursor: "pointer" }, // Hiển thị trỏ chuột kiểu click
-            })}
-        />
+        <>
+            <Table<DataType>
+                columns={columns}
+                dataSource={data}
+                onRow={(record) => ({
+                    onClick: () => router.push(`/site/${record.id}`), // Chuyển trang khi click vào row
+                    style: { cursor: "pointer" }, // Hiển thị trỏ chuột kiểu click
+                })}
+            />
+            <ProjectForm />
+        </>
     );
 };
 
