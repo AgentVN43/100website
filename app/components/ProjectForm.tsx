@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Table, Button, Modal, Form, Input, message, Upload } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { UploadFile } from "antd/es/upload/interface";
+import { useRouter } from "next/navigation";
 
 interface Project {
   _id: string;
@@ -22,6 +23,7 @@ export default function ProjectForm() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm();
+  const router = useRouter();
 
   // Fetch projects from the API
   const fetchProjects = async () => {
@@ -110,6 +112,12 @@ export default function ProjectForm() {
     }
   };
 
+  // Table row configuration to navigate to project details page when clicked
+  const tableRowProps = (record: Project) => ({
+    onClick: () => router.push(`/projects/${record._id}`),
+    style: { cursor: "pointer" },
+  });
+
   return (
     <div style={{ margin: "1rem 0" }}>
       <Button type="primary" onClick={handleOpenModal}>
@@ -122,6 +130,7 @@ export default function ProjectForm() {
         rowKey="_id"
         loading={loading}
         style={{ marginTop: "1rem" }}
+        onRow={tableRowProps}
       />
 
       <Modal
@@ -134,14 +143,18 @@ export default function ProjectForm() {
           <Form.Item
             label="Project Name"
             name="name"
-            rules={[{ required: true, message: "Please input the project name!" }]}
+            rules={[
+              { required: true, message: "Please input the project name!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Project Domain"
             name="domain"
-            rules={[{ required: true, message: "Please input the project domain!" }]}
+            rules={[
+              { required: true, message: "Please input the project domain!" },
+            ]}
           >
             <Input />
           </Form.Item>
