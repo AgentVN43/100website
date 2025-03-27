@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Bep Tu Doi",
+    "url": "https://beptudoi.com",
+    "username": "annk.sale",
+    "password": "h3UtkQiSflWUSpC6k5nAoqBR",
+    "jsonFile": "beptudoi.json",
+    "lastPostedIndex": 6
+  },
+  {
+    "name": "Bep Duong Lam",
+    "url": "https://bepduonglam.vn",
+    "username": "bepduonglam@admin",
+    "password": "J8Iwm7500DPg1D3F4cDp7wA8",
+    "jsonFile": "bepduonglam.json",
+    "lastPostedIndex": 2
+  },
+  {
+    "name": "Bep 89",
+    "url": "https://bep89.com",
+    "username": "bep89@admin",
+    "password": "LpOJxlzqIvuCEOFZDkItZwdT",
+    "jsonFile": "bep89.json",
+    "lastPostedIndex": 1
+  }
+]
