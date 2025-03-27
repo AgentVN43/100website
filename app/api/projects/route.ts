@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import connectDB from '../../../src/db/config';
-import Project from '../../../src/db/models/Project';
+import connectDB from '../../../app/db/config';
+import Project from '../../../app/db/models/Project';
 import fs from 'fs';
 import path from 'path';
 

@@ -1,13 +1,9 @@
-import ProjectForm from "@/components/ProjectForm";
-import { Layout } from "antd";
-import Title from "antd/es/typography/Title";
-import React from "react";
+import Image from "next/image";
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <Layout style={{ padding: "2rem", background: "#fff" }}>
-      <Title level={2}>Project Management</Title>
-      <ProjectForm />
-    </Layout>
+  <div>
+    this is home page
+  </div>
   );
 }
