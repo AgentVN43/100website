@@ -9,9 +9,10 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = params;
   try {
     await connectDB();
-    const project = await Project.findById(params.id);
+    const project = await Project.findById(id);
     if (!project) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
@@ -25,10 +26,12 @@ export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = params;
+
   try {
     await connectDB();
     const body = await request.json();
-    const updatedProject = await Project.findByIdAndUpdate(params.id, body, { new: true });
+    const updatedProject = await Project.findByIdAndUpdate(id, body, { new: true });
     if (!updatedProject) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
@@ -42,9 +45,11 @@ export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = params;
+
   try {
     await connectDB();
-    const deletedProject = await Project.findByIdAndDelete(params.id);
+    const deletedProject = await Project.findByIdAndDelete(id);
     if (!deletedProject) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
