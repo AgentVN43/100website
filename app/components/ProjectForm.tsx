@@ -5,6 +5,8 @@ import { Table, Button, Modal, Form, Input, message, Upload } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { UploadFile } from "antd/es/upload/interface";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
+import Link from "next/link";
 
 interface Project {
   _id: string;
@@ -15,6 +17,7 @@ interface Project {
   note?: string;
   content?: string; // File path returned from the API
   lastPostedIndex?: number;
+  updatedAt?: number;
 }
 
 export default function ProjectForm() {
@@ -25,7 +28,7 @@ export default function ProjectForm() {
   const [form] = Form.useForm();
   const router = useRouter();
 
-  // Fetch projects from the API
+  // Fetch projects from the API  
   const fetchProjects = async () => {
     setLoading(true);
     try {
@@ -43,6 +46,34 @@ export default function ProjectForm() {
     }
   };
 
+  const deleteProject = async (id: string) => {
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "DELETE",
+      });
+
+      // Nếu không phải JSON, chỉ đọc text để kiểm tra lỗi
+      const textResponse = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(textResponse); // Chỉ parse nếu là JSON hợp lệ
+      } catch {
+        throw new Error("Server không trả về JSON hợp lệ");
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete project");
+      }
+
+      message.success("Xóa dự án thành công!");
+      fetchProjects(); // Cập nhật lại danh sách
+    } catch (error: any) {
+      message.error("Lỗi khi xóa dự án!");
+    }
+  };
+
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -53,18 +84,46 @@ export default function ProjectForm() {
     { title: "Domain", dataIndex: "domain", key: "domain" },
     { title: "Username", dataIndex: "username", key: "username" },
     { title: "Note", dataIndex: "note", key: "note" },
+    { title: "Last Posted Index", dataIndex: "lastPostedIndex", key: "lastPostedIndex" },
     {
       title: "Content",
       dataIndex: "content",
       key: "content",
       render: (content: string) =>
         content ? (
-          <a href={content} target="_blank" rel="noreferrer">
+          <a
+            href={content}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
             View File
           </a>
         ) : (
           "No File"
         ),
+    },
+    {
+      title: "Last Update",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (value: string) => dayjs(value).format("HH:mm:ss DD/MM/YYYY"),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Button
+          type="primary"
+          danger
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteProject(record._id)
+          }}
+        >
+          Delete
+        </Button>
+      ),
     },
   ];
 
@@ -111,18 +170,12 @@ export default function ProjectForm() {
       message.error("Error creating project.");
     }
   };
-
-  // Table row configuration to navigate to project details page when clicked
-  const tableRowProps = (record: Project) => ({
-    onClick: () => router.push(`/projects/${record._id}`),
-    style: { cursor: "pointer" },
-  });
-
   return (
     <div style={{ margin: "1rem 0" }}>
       <Button type="primary" onClick={handleOpenModal}>
         + Add Project
       </Button>
+      {/* <Link href="/api/post" >Đăng bài</Link> */}
 
       <Table
         columns={columns}
@@ -130,7 +183,10 @@ export default function ProjectForm() {
         rowKey="_id"
         loading={loading}
         style={{ marginTop: "1rem" }}
-        onRow={tableRowProps}
+        onRow={(record) => ({
+          onClick: () => router.push(`/projects/${record._id}`),
+          style: { cursor: "pointer" },
+        })}
       />
 
       <Modal

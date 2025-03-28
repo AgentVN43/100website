@@ -1,9 +1,9 @@
-import Image from "next/image";
+import ProjectForm from "./components/ProjectForm";
 
 export default function Home() {
   return (
-  <div>
-    this is home page
-  </div>
+    <div className="text-3xl text-center">
+      Welcome to Tool Upload Content
+    </div>
   );
 }

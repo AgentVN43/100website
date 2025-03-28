@@ -10,6 +10,7 @@ import {
   Table,
   Modal,
   Input,
+  Tabs,
 } from "antd";
 
 const { TextArea } = Input;
@@ -89,19 +90,19 @@ export default function ProjectDetails() {
   const jsonColumns =
     jsonData.length > 0
       ? [
-          ...Object.keys(jsonData[0]).map((key) => ({
-            title: key.toUpperCase(),
-            dataIndex: key,
-            key: key,
-          })),
-          {
-            title: "Actions",
-            key: "actions",
-            render: (_: any, record: any, index: number) => (
-              <Button onClick={() => handleEdit(record, index)}>Edit</Button>
-            ),
-          },
-        ]
+        ...Object.keys(jsonData[0]).map((key) => ({
+          title: key.toUpperCase(),
+          dataIndex: key,
+          key: key,
+        })),
+        {
+          title: "Actions",
+          key: "actions",
+          render: (_: any, record: any, index: number) => (
+            <Button onClick={() => handleEdit(record, index)}>Edit</Button>
+          ),
+        },
+      ]
       : [];
 
   // Called when user clicks the Edit button
@@ -146,7 +147,7 @@ export default function ProjectDetails() {
     }
   };
 
-  if (loading) return <Spin />;
+  if (loading) return <div className="h-screen flex justify-center items-center"> <Spin /> </div>
   if (!project) return <div>No project found.</div>;
 
   return (
@@ -187,18 +188,119 @@ export default function ProjectDetails() {
         </div>
       )}
 
-      <Modal
+      {/* <Modal
         title="Edit JSON Record"
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         onOk={handleSaveEdit}
+        width={'80vw'}
         destroyOnClose
       >
         <TextArea
           value={editingContent}
           onChange={(e) => setEditingContent(e.target.value)}
-          rows={10}
+          rows={20}
         />
+      </Modal> */}
+
+      <Modal
+        title="Edit JSON Record"
+        open={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        onOk={handleSaveEdit}
+        width={'80vw'}
+        destroyOnClose
+      >
+        <Tabs defaultActiveKey="1">
+          {/* Tab 1: Hiển thị JSON */}
+          <Tabs.TabPane tab="JSON View" key="1">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div className="flex gap-3">
+                <div className="w-3/4">
+                  <Input
+                    placeholder="Title"
+                    value={(() => {
+                      try {
+                        return JSON.parse(editingContent)?.title || "";
+                      } catch {
+                        return "";
+                      }
+                    })()}
+                    onChange={(e) => {
+                      try {
+                        const updatedJson = { ...JSON.parse(editingContent), title: e.target.value };
+                        setEditingContent(JSON.stringify(updatedJson, null, 2));
+                      } catch {
+                        message.error("Invalid JSON format");
+                      }
+                    }}
+                  />
+                </div>
+                <div className="w-1/4">
+                  <Input
+                    placeholder="Status"
+                    value={(() => {
+                      try {
+                        return JSON.parse(editingContent)?.status || "";
+                      } catch {
+                        return "";
+                      }
+                    })()}
+                    onChange={(e) => {
+                      try {
+                        const updatedJson = { ...JSON.parse(editingContent), status: e.target.value };
+                        setEditingContent(JSON.stringify(updatedJson, null, 2));
+                      } catch {
+                        message.error("Invalid JSON format");
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              <TextArea
+                placeholder="Content"
+                rows={18}
+                value={(() => {
+                  try {
+                    return JSON.parse(editingContent)?.content || "";
+                  } catch {
+                    return "";
+                  }
+                })()}
+                onChange={(e) => {
+                  try {
+                    const updatedJson = { ...JSON.parse(editingContent), content: e.target.value };
+                    setEditingContent(JSON.stringify(updatedJson, null, 2));
+                  } catch {
+                    message.error("Invalid JSON format");
+                  }
+                }}
+              />
+
+
+            </div>
+          </Tabs.TabPane>
+
+
+          {/* Tab 2: Hiển thị HTML */}
+          <Tabs.TabPane tab="Rendered HTML" key="2">
+            <div
+              style={{ maxHeight: '60vh', overflowY: "auto", border: "1px solid #ddd", padding: 10 }}
+              dangerouslySetInnerHTML={{
+                __html: (() => {
+                  try {
+                    return JSON.parse(editingContent)?.content || "Invalid JSON";
+                  } catch (error) {
+                    console.error("JSON parse error:", error);
+                    return "Invalid JSON format";
+                  }
+                })(),
+              }}
+            />
+          </Tabs.TabPane>
+
+        </Tabs>
       </Modal>
     </div>
   );

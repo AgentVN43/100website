@@ -9,9 +9,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AntdRegistry>
           <ConfigProvider>
-            <div>
+            <div className="max-w-7xl mx-auto px-3">
               <Header />
+              <div className="pt-12">
               {children}
+              </div>
             </div>
           </ConfigProvider>
         </AntdRegistry>
