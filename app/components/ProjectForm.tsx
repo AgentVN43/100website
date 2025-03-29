@@ -7,6 +7,7 @@ import type { UploadFile } from "antd/es/upload/interface";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import Link from "next/link";
+import PostButton from "./postButton";
 
 interface Project {
   _id: string;
@@ -176,7 +177,7 @@ export default function ProjectForm() {
         + Add Project
       </Button>
       {/* <Link href="/api/post" >Đăng bài</Link> */}
-
+      <PostButton />
       <Table
         columns={columns}
         dataSource={projects}

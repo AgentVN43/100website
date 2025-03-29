@@ -11,6 +11,7 @@ import {
   Modal,
   Input,
   Tabs,
+  Layout,
 } from "antd";
 
 const { TextArea } = Input;
@@ -39,7 +40,6 @@ export default function ProjectDetails() {
   const [editingRecord, setEditingRecord] = useState<any>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState("");
-
   // Function to fetch JSON file content
   const fetchJsonContent = async (fileUrl: string) => {
     setJsonLoading(true);
@@ -112,7 +112,16 @@ export default function ProjectDetails() {
     setEditingContent(JSON.stringify(record, null, 2));
     setEditModalVisible(true);
   };
-
+  const htmlContent = (() => {
+    try {
+      const content = JSON.parse(editingContent)?.response || "Không có dữ liệu HTML";
+      // Loại bỏ markdown code block: ```html ... ```
+      return content.replace(/```html\s*([\s\S]*?)\s*```/, '$1');
+    } catch (error) {
+      console.error("Lỗi parse JSON:", error);
+      return "JSON không hợp lệ";
+    }
+  })();
   // Called when saving changes from the edit modal
   const handleSaveEdit = async () => {
     try {
@@ -188,21 +197,6 @@ export default function ProjectDetails() {
         </div>
       )}
 
-      {/* <Modal
-        title="Edit JSON Record"
-        open={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        onOk={handleSaveEdit}
-        width={'80vw'}
-        destroyOnClose
-      >
-        <TextArea
-          value={editingContent}
-          onChange={(e) => setEditingContent(e.target.value)}
-          rows={20}
-        />
-      </Modal> */}
-
       <Modal
         title="Edit JSON Record"
         open={editModalVisible}
@@ -263,14 +257,14 @@ export default function ProjectDetails() {
                 rows={18}
                 value={(() => {
                   try {
-                    return JSON.parse(editingContent)?.content || "";
+                    return JSON.parse(editingContent)?.response || "";
                   } catch {
                     return "";
                   }
                 })()}
                 onChange={(e) => {
                   try {
-                    const updatedJson = { ...JSON.parse(editingContent), content: e.target.value };
+                    const updatedJson = { ...JSON.parse(editingContent), response: e.target.value };
                     setEditingContent(JSON.stringify(updatedJson, null, 2));
                   } catch {
                     message.error("Invalid JSON format");
@@ -286,19 +280,13 @@ export default function ProjectDetails() {
           {/* Tab 2: Hiển thị HTML */}
           <Tabs.TabPane tab="Rendered HTML" key="2">
             <div
-              style={{ maxHeight: '60vh', overflowY: "auto", border: "1px solid #ddd", padding: 10 }}
+              className="max-h-[60vh] overflow-y-auto border border-gray-300 p-2"
               dangerouslySetInnerHTML={{
-                __html: (() => {
-                  try {
-                    return JSON.parse(editingContent)?.content || "Invalid JSON";
-                  } catch (error) {
-                    console.error("JSON parse error:", error);
-                    return "Invalid JSON format";
-                  }
-                })(),
+                __html: htmlContent,
               }}
             />
           </Tabs.TabPane>
+
 
         </Tabs>
       </Modal>

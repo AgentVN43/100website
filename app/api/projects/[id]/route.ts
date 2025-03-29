@@ -7,9 +7,10 @@ export const runtime = 'nodejs';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> } // Định nghĩa params là Promise
 ) {
-  const { id } = params;
+  const { id } = await context.params; // Đợi params resolve trước khi sử dụng
+
   try {
     await connectDB();
     const project = await Project.findById(id);
@@ -24,9 +25,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> } // Định nghĩa params là Promise
 ) {
-  const { id } = params;
+  const { id } = await context.params; // Đợi params resolve trước khi sử dụng
+
 
   try {
     await connectDB();
@@ -43,9 +45,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> } // Định nghĩa params là Promise
 ) {
-  const { id } = params;
+  const { id } = await context.params; // Đợi params resolve trước khi sử dụng
+
 
   try {
     await connectDB();
