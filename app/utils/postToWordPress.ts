@@ -9,6 +9,7 @@ interface SiteConfig {
   password: string;
   content: string;
   lastPostedIndex: number;
+  isActive: boolean;
 }
 
 const getSites = async (): Promise<SiteConfig[]> => {
@@ -89,8 +90,7 @@ const postNextArticle = async (site: SiteConfig) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        ...nextPost,   
-        status: "publish",  
+        ...nextPost
       }),
     });
     const data = await response.json();
