@@ -10,6 +10,7 @@ const ProjectSchema = new Schema(
     content: { type: String, default: null },
     lastPostedIndex: { type: Number, default: 0 },
     note: { type: String },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
