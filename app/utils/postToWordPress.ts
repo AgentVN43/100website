@@ -89,12 +89,10 @@ const postNextArticle = async (site: SiteConfig) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        ...nextPost,    // Giữ nguyên nội dung bài viết
-        status: "publish",  // Đảm bảo bài viết được xuất bản
+        ...nextPost,   
+        status: "publish",  
       }),
     });
-    console.log("🚀 ~ postNextArticle ~ response:", response)
-
     const data = await response.json();
     if (data.id) {
       console.log(`✅ Đã đăng bài lên ${site.name}: ${data.link}`);

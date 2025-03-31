@@ -173,11 +173,13 @@ export default function ProjectForm() {
   };
   return (
     <div style={{ margin: "1rem 0" }}>
-      <Button type="primary" onClick={handleOpenModal}>
-        + Add Project
-      </Button>
-      {/* <Link href="/api/post" >Đăng bài</Link> */}
-      <PostButton />
+      <div className="flex justify-between">
+        <Button type="primary" onClick={handleOpenModal}>
+          + Add Project
+        </Button>
+        {/* <Link href="/api/post" >Đăng bài</Link> */}
+        <PostButton />
+      </div>
       <Table
         columns={columns}
         dataSource={projects}

@@ -31,7 +31,9 @@ export default function ProjectDetails() {
   const params = useParams();
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
+  console.log("🚀 ~ ProjectDetails ~ project:", project)
   const [jsonData, setJsonData] = useState<any[]>([]);
+  console.log("🚀 ~ ProjectDetails ~ jsonData:", jsonData)
   const [loading, setLoading] = useState(true);
   const [jsonLoading, setJsonLoading] = useState(false);
 
