@@ -99,6 +99,7 @@ export default function SEOChecker({
       meta: {
         rank_math_focus_keyword: keyword, // ✅ Cập nhật meta keyword
       },
+      featured_media: selectedImage ? selectedImage.id : null, // ✅ Cập nhật featured media nếu có
     };
 
     const authHeader =
@@ -146,6 +147,7 @@ export default function SEOChecker({
   const handleSelectImage = (image) => {
     setSelectedImage(image); // Cập nhật ảnh được chọn
     setIsMediaVisible(false); // Đóng modal Media
+    console.log(image);
   };
 
   return (
@@ -260,13 +262,29 @@ export default function SEOChecker({
       </Layout>
 
       {selectedImage && (
-        <div style={{ marginTop: "10px" }}>
+        <div>
+          <p>Ảnh đã chọn ID: {selectedImage.id}</p>
           <img
-            src={selectedImage}
+            src={selectedImage.url}
             alt="Selected"
-            style={{ width: "100px", borderRadius: "5px" }}
+            style={{ width: "200px" }}
           />
-          <p>{selectedImage}</p>
+          <button
+            onClick={() => {
+              const imgTag = `<img src="${selectedImage.url}" alt="${keyword}" style="width: 200px;" />`;
+              navigator.clipboard
+                .writeText(imgTag)
+                .then(() => alert("Đã sao chép vào bộ nhớ đệm!"))
+                .catch((err) => console.error("Lỗi sao chép:", err));
+            }}
+            style={{
+              marginTop: "10px",
+              padding: "5px 10px",
+              cursor: "pointer",
+            }}
+          >
+            Copy Ảnh
+          </button>
         </div>
       )}
 

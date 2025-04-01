@@ -37,7 +37,10 @@ export default function Media({
       }
 
       const data = await res.json();
-      const images = data.map((item) => item.guid.rendered);
+      const images = data.map((item) => ({
+        id: item.id, // Lấy ID ảnh
+        url: item.guid.rendered, // Lấy URL ảnh
+      }));
       setMedia(images);
 
       setPagination((prev) => ({
@@ -74,8 +77,8 @@ export default function Media({
         <div className="grid grid-cols-4 gap-2">
           {media.map((image) => (
             <img
-              key={image}
-              src={image}
+              key={image.id}
+              src={image.url}
               alt="Media"
               style={{ width: "100%", cursor: "pointer" }}
               onClick={() => onSelectImage(image)}
