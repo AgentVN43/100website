@@ -11,6 +11,7 @@ import {
   Typography,
 } from "antd";
 import { useEffect, useState } from "react";
+import Media from "./Media";
 
 const { Content, Sider } = Layout;
 const { TextArea } = Input;
@@ -24,8 +25,13 @@ export default function SEOChecker({
 }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [slug, setSlug] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [score, setScore] = useState(0);
   const [isCodeView, setIsCodeView] = useState(false);
+
+  const [isMediaVisible, setIsMediaVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState([]);
@@ -46,7 +52,7 @@ export default function SEOChecker({
   const fetchPost = async (page = 1) => {
     setLoading(true);
     try {
-      const url = `${domain}/wp-json/wp/v2/posts/${selectedId}?_fields=title,content`;
+      const url = `${domain}/wp-json/wp/v2/posts/${selectedId}?_fields=title,content,slug,meta.rank_math_focus_keyword,meta.rank_math_seo_score`;
       const authHeader =
         "Basic " + btoa(`${credentials.username}:${credentials.password}`);
       const res = await fetch(url, {
@@ -64,6 +70,9 @@ export default function SEOChecker({
       setPost(data);
       setTitle(data.title?.rendered);
       setContent(data.content?.rendered);
+      setSlug(data.slug);
+      setKeyword(data.meta?.rank_math_focus_keyword || "");
+      setScore(data.meta?.rank_math_seo_score || 0);
       setPagination((prev) => ({
         ...prev,
         total: parseInt(res.headers.get("X-WP-Total") || "0"),
@@ -94,7 +103,7 @@ export default function SEOChecker({
     const authHeader =
       "Basic " + btoa(`${credentials.username}:${credentials.password}`);
 
-      console.log(authHeader)
+    console.log(authHeader);
 
     try {
       const response = await fetch(
@@ -132,6 +141,11 @@ export default function SEOChecker({
     }
   }, [visible]); // Khi `visible` thay đổi, nếu `false` thì reset state
 
+  const handleSelectImage = (image) => {
+    setSelectedImage(image); // Cập nhật ảnh được chọn
+    setIsMediaVisible(false); // Đóng modal Media
+  };
+
   return (
     <Modal
       open={visible}
@@ -147,6 +161,12 @@ export default function SEOChecker({
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            style={{ marginBottom: "10px" }}
+          />
+          <Input
+            placeholder="Slug"
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
             style={{ marginBottom: "10px" }}
           />
           <Switch
@@ -200,6 +220,7 @@ export default function SEOChecker({
 
         <Sider width={300} style={{ padding: "20px", background: "#fafafa" }}>
           <Title level={4}>Checklist</Title>
+          <p>Điểm SEO: {score}/100</p>
           <Checkbox checked={keywordInTitle}>
             {keywordInTitle
               ? "✅ Tuyệt vời! Bạn đang sử dụng từ khoá chính trong Tiêu đề SEO."
@@ -226,8 +247,37 @@ export default function SEOChecker({
               ? `✅ Nội dung hiện có độ dài là ${wordCount} từ.`
               : `❌ Nội dung hiện có độ dài là ${wordCount} từ. Hãy cân nhắc viết ít nhất 600 từ để tối ưu hóa.`}
           </Checkbox>
+          <Button
+            type="default"
+            style={{ marginTop: "10px", width: "100%" }}
+            onClick={() => setIsMediaVisible(true)}
+          >
+            Chọn ảnh
+          </Button>
         </Sider>
       </Layout>
+
+      {selectedImage && (
+        <div style={{ marginTop: "10px" }}>
+          <img
+            src={selectedImage}
+            alt="Selected"
+            style={{ width: "100px", borderRadius: "5px" }}
+          />
+          <p>{selectedImage}</p>
+        </div>
+      )}
+
+      {isMediaVisible && (
+        <Media
+          visible={isMediaVisible}
+          selectedId={selectedId}
+          onClose={() => setIsMediaVisible(false)}
+          domain={domain}
+          credentials={credentials}
+          onSelectImage={handleSelectImage}
+        />
+      )}
     </Modal>
   );
 }

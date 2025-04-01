@@ -76,11 +76,10 @@ export default function ContentSEO() {
     }
   };
 
-
   const fetchPost = async (page = 1) => {
     setLoading(true);
     try {
-      const url = `${domain}/wp-json/wp/v2/posts?_fields=id,link,title,type=post&meta_key=rank_math_seo_score&meta_compare=<&meta_value=70&per_page=${pagination.pageSize}&page=${page}`;
+      const url = `${domain}/wp-json/wp/v2/posts?_fields=id,link,title,type=post,meta.rank_math_focus_keyword,meta.rank_math_seo_score&per_page=${pagination.pageSize}&page=${page}`;
 
       const authHeader =
         "Basic " + btoa(`${credentials.username}:${credentials.password}`);
@@ -137,8 +136,20 @@ export default function ContentSEO() {
         </a>
       ),
     },
+    {
+      title: "Focus Keyword",
+      dataIndex: "meta",
+      key: "focus_keyword",
+      render: (meta) => meta?.rank_math_focus_keyword || "N/A",
+    },
+    {
+      title: "SEO Score",
+      dataIndex: "meta",
+      key: "seo_score",
+      render: (meta) => meta?.rank_math_seo_score ?? "N/A",
+    },
   ];
-
+  console.log(post);
   return (
     <div style={{ padding: "20px" }}>
       <Select
