@@ -120,6 +120,7 @@ export default function SEOChecker({
       );
 
       if (response.ok) {
+        onClose()
         message.success("Cập nhật thành công!");
       } else {
         message.error("Cập nhật thất bại!");
