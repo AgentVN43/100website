@@ -37,7 +37,10 @@ export default function Media({
       }
 
       const data = await res.json();
-      const images = data.map((item) => item.guid.rendered);
+      const images = data.map((item) => ({
+        id: item.id, // Lấy ID ảnh
+        url: item.guid.rendered, // Lấy URL ảnh
+      }));
       setMedia(images);
 
       setPagination((prev) => ({
@@ -73,11 +76,17 @@ export default function Media({
         <div style={{ display: "flex", gap: "10px" }}>
           {media.map((image) => (
             <img
-              key={image}
-              src={image}
+              key={image.id}
+              src={image.url}
               alt="Media"
-              style={{ width: "100px", cursor: "pointer" }}
-              onClick={() => onSelectImage(image)}
+              style={{
+                width: "100px",
+                height: "100px",
+                cursor: "pointer",
+                objectFit: "cover",
+                borderRadius: "5px",
+              }}
+              onClick={() => onSelectImage(image)} // Trả về { id, url }
             />
           ))}
         </div>
