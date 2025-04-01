@@ -19,6 +19,44 @@ export default function Media({
     total: 0,
   });
 
+  // const fetchMedia = async (page = 1) => {
+  //   setLoading(true);
+  //   try {
+  //     const url = `${domain}/wp-json/wp/v2/media?_fields=id,guid.rendered&page=${page}`;
+  //     const authHeader =
+  //       "Basic " + btoa(`${credentials.username}:${credentials.password}`);
+  //     const res = await fetch(url, {
+  //       headers: {
+  //         Authorization: authHeader,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! status: ${res.status}`);
+  //     }
+
+  //     const data = await res.json();
+  //     const images = data.map((item) => ({
+  //       id: item.id, // Lấy ID ảnh
+  //       url: item.guid.rendered, // Lấy URL ảnh
+  //     }));
+  //     setMedia(images);
+
+  //     setPagination((prev) => ({
+  //       ...prev,
+  //       total: parseInt(res.headers.get("X-WP-Total") || "0"),
+  //     }));
+  //     setLoading(false);
+  //     console.log("Fetched posts:", data);
+  //   } catch (error) {
+  //     console.error("Error fetching posts:", error);
+  //     message.error("Failed to load posts");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchMedia = async (page = 1) => {
     setLoading(true);
     try {
@@ -37,21 +75,28 @@ export default function Media({
       }
 
       const data = await res.json();
-      const images = data.map((item) => ({
-        id: item.id, // Lấy ID ảnh
-        url: item.guid.rendered, // Lấy URL ảnh
-      }));
-      setMedia(images);
 
+      // Kiểm tra nếu data không phải array, gán giá trị rỗng
+      if (!Array.isArray(data)) {
+        console.error("API trả về không phải mảng:", data);
+        setMedia([]); // Đảm bảo media luôn là mảng
+        return;
+      }
+
+      const images = data.map((item) => ({
+        id: item.id,
+        url: item.guid.rendered,
+      }));
+
+      setMedia(images); // Cập nhật state với mảng hợp lệ
       setPagination((prev) => ({
         ...prev,
         total: parseInt(res.headers.get("X-WP-Total") || "0"),
       }));
-      setLoading(false);
-      console.log("Fetched posts:", data);
     } catch (error) {
       console.error("Error fetching posts:", error);
       message.error("Failed to load posts");
+      setMedia([]); // Reset state nếu lỗi
     } finally {
       setLoading(false);
     }
@@ -85,7 +130,8 @@ export default function Media({
                 objectFit: "cover",
                 borderRadius: "5px",
               }}
-              onClick={() => onSelectImage(image)} // Trả về { id, url }
+              // onClick={() => onSelectImage(image.url)}
+              onClick={() => onSelectImage(image.id, image.url)}
             />
           ))}
         </div>
