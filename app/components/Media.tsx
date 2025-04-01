@@ -73,15 +73,19 @@ export default function Media({
         height={600}
       >
         <h2>Chọn ảnh</h2>
-        {/* <div style={{ display: "flex", gap: "10px" }}> */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-3">
           {media.map((image) => (
             <img
               key={image.id}
               src={image.url}
               alt="Media"
-              style={{ width: "100%", cursor: "pointer" }}
-              onClick={() => onSelectImage(image)}
+              style={{
+                width: "100%",
+                cursor: "pointer",
+                objectFit: "cover",
+                borderRadius: "5px",
+              }}
+              onClick={() => onSelectImage(image)} // Trả về { id, url }
             />
           ))}
         </div>
