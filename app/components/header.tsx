@@ -14,6 +14,9 @@ export default function Header() {
             <Link href={'/post'} className='cursor-pointer py-3'>
                 <HomeOutlined /> Bài viết SEO
             </Link>
+            <Link href={'/reports'} className='cursor-pointer py-3'>
+                <HomeOutlined /> Báo cáo
+            </Link>
         </div>
     )
 }
