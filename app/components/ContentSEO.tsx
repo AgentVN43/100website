@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Select, Form, message, Button, Table, Input, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import SEOChecker from "./SEOChecker";
-import { useRouter } from "next/router";
-
+import { useRouter } from "next/navigation";
 const { Option } = Select;
 
 interface Project {
@@ -15,12 +14,20 @@ interface Project {
   username: string;
   password: string;
   note?: string;
-  content?: string; // File path returned from the API
+  content?: string;
   lastPostedIndex?: number;
   updatedAt?: number;
 }
 
+interface Post {
+  id: number;
+  link: string;
+  meta: object;
+  title: object;
+}
+
 export default function ContentSEO() {
+  const router = useRouter()
   const [domain, setDomain] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
@@ -29,7 +36,8 @@ export default function ContentSEO() {
     password: "",
   });
   const [form] = Form.useForm();
-  const [post, setPost] = useState([]);
+  const [post, setPost] = useState<Post[]>([]);
+  console.log("🚀 ~ ContentSEO ~ post:", post)
   const [modalVisible, setModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -66,6 +74,11 @@ export default function ContentSEO() {
       (item) => item.domain === selectedDomain
     );
     if (selectedProject) {
+      sessionStorage.setItem("domain", JSON.stringify(selectedDomain))
+      sessionStorage.setItem("credentials", JSON.stringify({
+        username: selectedProject.username,
+        password: selectedProject.password,
+      }));
       setDomain(selectedDomain);
       setCredentials({
         username: selectedProject.username,
@@ -111,11 +124,11 @@ export default function ContentSEO() {
     }
   };
 
-  const handleRowClick = (record) => {
-    setSelectedId(record.id);
-    setModalVisible(true);
-    console.log(selectedId);
-  };
+  // const handleRowClick = (record) => {
+  //   setSelectedId(record.id);
+  //   setModalVisible(true);
+  //   console.log(selectedId);
+  // };
 
   console.log(post);
 
@@ -174,18 +187,19 @@ export default function ContentSEO() {
         loading={loading}
         pagination={pagination}
         onRow={(record) => ({
-          onClick: () => handleRowClick(record),
+          onClick: () => router.push(`/post/${record?.id}`),
+          style: { cursor: "pointer" },
         })}
         style={{ marginTop: "20px" }}
       />
 
-      <SEOChecker
+      {/* <SEOChecker
         visible={modalVisible}
         selectedId={selectedId}
         onClose={() => setModalVisible(false)}
         domain={domain}
         credentials={credentials}
-      />
+      /> */}
     </div>
   );
 }
