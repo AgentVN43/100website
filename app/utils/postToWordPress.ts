@@ -28,7 +28,10 @@ const getSites = async (): Promise<SiteConfig[]> => {
       throw new Error("❌ Dữ liệu API không đúng định dạng!");
     }
 
-    return result.data; // Trả về mảng từ `data`
+    console.log("🚀 ~ getSites ~ result.data:", result.data)
+
+    return result.data.filter((project: any) => project.isActive);
+
   } catch (error) {
     console.error("❌ Lỗi khi fetch sites:", error);
     return [];

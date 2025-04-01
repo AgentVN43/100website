@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Input, message, Upload } from "antd";
+import { Table, Button, Modal, Form, Input, message, Upload, Switch } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { UploadFile } from "antd/es/upload/interface";
 import { useRouter } from "next/navigation";
@@ -19,6 +19,7 @@ interface Project {
   content?: string; // File path returned from the API
   lastPostedIndex?: number;
   updatedAt?: number;
+  isActive: Boolean;
 }
 
 export default function ProjectForm() {
@@ -75,6 +76,37 @@ export default function ProjectForm() {
   };
 
 
+  const updateProject = async (id: string, updatedData: Partial<Project>) => {
+    console.log("🚀 ~ updateProject ~ updatedData:", updatedData);
+
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+
+      const textResponse = await response.text();
+      let data;
+      try {
+        data = JSON.parse(textResponse);
+      } catch {
+        throw new Error("Server không trả về JSON hợp lệ");
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || "Cập nhật thất bại");
+      }
+
+      message.success("Cập nhật thành công!");
+      fetchProjects(); // Load lại danh sách dự án
+    } catch (error: any) {
+      console.error("Lỗi cập nhật:", error.message);
+      message.error(error.message || "Lỗi khi cập nhật!");
+    }
+  };
+
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -109,6 +141,21 @@ export default function ProjectForm() {
       dataIndex: "updatedAt",
       key: "updatedAt",
       render: (value: string) => dayjs(value).format("HH:mm:ss DD/MM/YYYY"),
+    },
+    {
+      title: "Active",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (isActive: boolean, record) => (
+        <Switch
+          checked={isActive}
+          onClick={(checked, e) => {
+            e.stopPropagation();
+            updateProject(record._id, { ...record, isActive: checked });
+          }}
+        />
+
+      ),
     },
     {
       title: "Action",
