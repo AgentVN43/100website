@@ -23,6 +23,7 @@ export default function SEOChecker({
   domain,
   credentials,
 }) {
+  console.log("🚀 ~ credentials:", credentials)
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [slug, setSlug] = useState("");
