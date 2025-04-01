@@ -27,7 +27,7 @@ interface Post {
 }
 
 export default function ContentSEO() {
-  const router = useRouter()
+  const router = useRouter();
   const [domain, setDomain] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ export default function ContentSEO() {
   });
   const [form] = Form.useForm();
   const [post, setPost] = useState<Post[]>([]);
-  console.log("🚀 ~ ContentSEO ~ post:", post)
+  console.log("🚀 ~ ContentSEO ~ post:", post);
   const [modalVisible, setModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -74,11 +74,14 @@ export default function ContentSEO() {
       (item) => item.domain === selectedDomain
     );
     if (selectedProject) {
-      sessionStorage.setItem("domain", JSON.stringify(selectedDomain))
-      sessionStorage.setItem("credentials", JSON.stringify({
-        username: selectedProject.username,
-        password: selectedProject.password,
-      }));
+      sessionStorage.setItem("domain", JSON.stringify(selectedDomain));
+      sessionStorage.setItem(
+        "credentials",
+        JSON.stringify({
+          username: selectedProject.username,
+          password: selectedProject.password,
+        })
+      );
       setDomain(selectedDomain);
       setCredentials({
         username: selectedProject.username,
@@ -92,7 +95,7 @@ export default function ContentSEO() {
   const fetchPost = async (page = 1) => {
     setLoading(true);
     try {
-      const url = `${domain}/wp-json/wp/v2/posts?_fields=id,link,title,type=post,meta.rank_math_focus_keyword,meta.rank_math_seo_score&per_page=${pagination.pageSize}&page=${page}`;
+      const url = `${domain}/wp-json/wp/v2/posts?_fields=id,link,title,featured_media,type=post,meta.rank_math_focus_keyword,meta.rank_math_seo_score&per_page=${pagination.pageSize}&page=${page}`;
 
       const authHeader =
         "Basic " + btoa(`${credentials.username}:${credentials.password}`);
@@ -160,6 +163,12 @@ export default function ContentSEO() {
       dataIndex: "meta",
       key: "seo_score",
       render: (meta) => meta?.rank_math_seo_score ?? "N/A",
+    },
+    {
+      title: "Thumbnail",
+      dataIndex: "featured_media",
+      key: "featured_media",
+      render: (featured_media) => (featured_media && featured_media) || "N/A",
     },
   ];
   console.log(post);
