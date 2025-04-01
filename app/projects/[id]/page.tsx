@@ -259,14 +259,14 @@ export default function ProjectDetails() {
                 rows={18}
                 value={(() => {
                   try {
-                    return JSON.parse(editingContent)?.response || "";
+                    return JSON.parse(editingContent)?.content || "";
                   } catch {
                     return "";
                   }
                 })()}
                 onChange={(e) => {
                   try {
-                    const updatedJson = { ...JSON.parse(editingContent), response: e.target.value };
+                    const updatedJson = { ...JSON.parse(editingContent), content: e.target.value };
                     setEditingContent(JSON.stringify(updatedJson, null, 2));
                   } catch {
                     message.error("Invalid JSON format");
