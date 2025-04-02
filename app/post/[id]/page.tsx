@@ -29,6 +29,7 @@ export default function DetailPost() {
   const [keyword, setKeyword] = useState("");
   const [score, setScore] = useState(0);
   const [isCodeView, setIsCodeView] = useState(false);
+  const [currentFeaturedMedia, setCurrentFeaturedMedia] = useState(null);
 
   const [isMediaVisible, setIsMediaVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -73,6 +74,7 @@ export default function DetailPost() {
       setSlug(data.slug);
       setKeyword(data.meta?.rank_math_focus_keyword || "");
       setScore(data.meta?.rank_math_seo_score || 0);
+      setCurrentFeaturedMedia(data.featured_media);
       setPagination((prev) => ({
         ...prev,
         total: parseInt(res.headers.get("X-WP-Total") || "0"),
@@ -98,7 +100,7 @@ export default function DetailPost() {
       meta: {
         rank_math_focus_keyword: keyword, // ✅ Cập nhật meta keyword
       },
-      featured_media: selectedImage ? selectedImage.id : null, // ✅ Cập nhật featured media nếu có
+      featured_media: selectedImage?.id ?? currentFeaturedMedia, // ✅ Cập nhật featured media nếu có
     };
 
     const authHeader =
