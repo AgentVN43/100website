@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { Select, Form, message, Button, Table, Input, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import SEOChecker from "./SEOChecker";
 import { useRouter } from "next/navigation";
 const { Option } = Select;
 
@@ -201,14 +200,6 @@ export default function ContentSEO() {
         })}
         style={{ marginTop: "20px" }}
       />
-
-      {/* <SEOChecker
-        visible={modalVisible}
-        selectedId={selectedId}
-        onClose={() => setModalVisible(false)}
-        domain={domain}
-        credentials={credentials}
-      /> */}
     </div>
   );
 }

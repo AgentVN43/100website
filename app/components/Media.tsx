@@ -1,6 +1,6 @@
 "use client";
 
-import { message, Modal } from "antd";
+import { message, Modal, Button, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 
 export default function Media({
@@ -19,45 +19,7 @@ export default function Media({
     total: 0,
   });
 
-  // const fetchMedia = async (page = 1) => {
-  //   setLoading(true);
-  //   try {
-  //     const url = `${domain}/wp-json/wp/v2/media?_fields=id,guid.rendered&page=${page}`;
-  //     const authHeader =
-  //       "Basic " + btoa(`${credentials.username}:${credentials.password}`);
-  //     const res = await fetch(url, {
-  //       headers: {
-  //         Authorization: authHeader,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! status: ${res.status}`);
-  //     }
-
-  //     const data = await res.json();
-  //     const images = data.map((item) => ({
-  //       id: item.id, // Lấy ID ảnh
-  //       url: item.guid.rendered, // Lấy URL ảnh
-  //     }));
-  //     setMedia(images);
-
-  //     setPagination((prev) => ({
-  //       ...prev,
-  //       total: parseInt(res.headers.get("X-WP-Total") || "0"),
-  //     }));
-  //     setLoading(false);
-  //     console.log("Fetched posts:", data);
-  //   } catch (error) {
-  //     console.error("Error fetching posts:", error);
-  //     message.error("Failed to load posts");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const fetchMedia = async (page = 1) => {
+  const fetchMedia = async (page = 1, append = false) => {
     setLoading(true);
     try {
       const url = `${domain}/wp-json/wp/v2/media?_fields=id,guid.rendered&page=${page}`;
@@ -76,7 +38,6 @@ export default function Media({
 
       const data = await res.json();
 
-      // Kiểm tra nếu data không phải array, gán giá trị rỗng
       if (!Array.isArray(data)) {
         console.error("API trả về không phải mảng:", data);
         setMedia([]); // Đảm bảo media luôn là mảng
@@ -88,54 +49,68 @@ export default function Media({
         url: item.guid.rendered,
       }));
 
-      setMedia(images); // Cập nhật state với mảng hợp lệ
+      setMedia((prev) => (append ? [...prev, ...images] : images)); // Nối dữ liệu mới
       setPagination((prev) => ({
         ...prev,
+        current: page,
         total: parseInt(res.headers.get("X-WP-Total") || "0"),
       }));
     } catch (error) {
       console.error("Error fetching posts:", error);
       message.error("Failed to load posts");
-      setMedia([]); // Reset state nếu lỗi
+      setMedia([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchMedia();
+    fetchMedia(1);
   }, []);
 
-  console.log(media);
+  const loadMore = () => {
+    if (pagination.current * pagination.pageSize < pagination.total) {
+      fetchMedia(pagination.current + 1, true);
+    }
+  };
 
   return (
-    <>
-      <Modal
-        open={visible}
-        onCancel={onClose}
-        footer={null}
-        width={1000}
-        height={600}
-      >
-        <h2>Chọn ảnh</h2>
-        <div className="grid grid-cols-4 gap-3">
-          {media.map((image) => (
-            <img
-              key={image.id}
-              src={image.url}
-              alt="Media"
-              style={{
-                width: "100%",
-                cursor: "pointer",
-                objectFit: "cover",
-                borderRadius: "5px",
-              }}
-              // onClick={() => onSelectImage(image.url)}
-              onClick={() => onSelectImage(image.id, image.url)}
-            />
-          ))}
+    <Modal
+      open={visible}
+      onCancel={onClose}
+      footer={null}
+      width={1000}
+      height={600}
+      bodyStyle={{
+        overflowY: 'auto', // Add this line to enable vertical scrolling
+        maxHeight: 'calc(100vh - 200px)', // Adjust this based on your modal's size, this ensures scroll only happens within the modal content
+      }}
+    >
+      <h2 className="">Chọn ảnh</h2>
+      <div className="grid grid-cols-4 gap-3">
+        {media.map((image) => (
+          <img
+            key={image.id}
+            src={image.url}
+            alt="Media"
+            style={{
+              width: "100%",
+              cursor: "pointer",
+              objectFit: "cover",
+              borderRadius: "5px",
+            }}
+            onClick={() => onSelectImage(image.id, image.url)}
+          />
+        ))}
+      </div>
+
+      {pagination.current * pagination.pageSize < pagination.total && (
+        <div className="text-center mt-4">
+          <Button onClick={loadMore} loading={loading}>
+            Xem thêm
+          </Button>
         </div>
-      </Modal>
-    </>
+      )}
+    </Modal>
   );
 }
