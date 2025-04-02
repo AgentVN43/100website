@@ -17,6 +17,9 @@ export default function Header() {
             <Link href={'/reports'} className='cursor-pointer py-3'>
                 <HomeOutlined /> Báo cáo
             </Link>
+            <Link href={'/category'} className='cursor-pointer py-3'>
+                <HomeOutlined /> Danh mục
+            </Link>
         </div>
     )
 }

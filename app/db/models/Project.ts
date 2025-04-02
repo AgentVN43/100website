@@ -11,6 +11,7 @@ const ProjectSchema = new Schema(
     lastPostedIndex: { type: Number, default: 0 },
     note: { type: String },
     isActive: { type: Boolean, default: true },
+    category: { type: Schema.Types.ObjectId, ref: "Categories", required: false },
   },
   { timestamps: true }
 );
