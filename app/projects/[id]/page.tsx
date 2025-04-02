@@ -116,7 +116,7 @@ export default function ProjectDetails() {
   };
   const htmlContent = (() => {
     try {
-      const content = JSON.parse(editingContent)?.response || "Không có dữ liệu HTML";
+      const content = JSON.parse(editingContent)?.content || "Không có dữ liệu HTML";
       // Loại bỏ markdown code block: ```html ... ```
       return content.replace(/```html\s*([\s\S]*?)\s*```/, '$1');
     } catch (error) {

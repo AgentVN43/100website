@@ -245,19 +245,33 @@ export default function DetailPost() {
           </Button>
 
           {selectedImage && (
-            <div style={{ marginTop: "10px" }}>
+            <div>
+              <p>Ảnh đã chọn ID: {selectedImage.id}</p>
               <img
                 src={selectedImage.url}
                 alt="Selected"
-                style={{ width: "100%", borderRadius: "5px" }}
+                style={{ width: "200px" }}
               />
-              <p>{selectedImage.url}</p>
-              <p>{selectedImage.id}</p>
+              <button
+                onClick={() => {
+                  const imgTag = `<img src="${selectedImage.url}" alt="${keyword}" style="width: 100%;" />`;
+                  navigator.clipboard
+                    .writeText(imgTag)
+                    .then(() => alert("Đã sao chép vào bộ nhớ đệm!"))
+                    .catch((err) => console.error("Lỗi sao chép:", err));
+                }}
+                style={{
+                  marginTop: "10px",
+                  padding: "5px 10px",
+                  cursor: "pointer",
+                }}
+              >
+                Copy Ảnh
+              </button>
             </div>
           )}
         </Sider>
       </Layout>
-
       {isMediaVisible && (
         <Media
           visible={isMediaVisible}
