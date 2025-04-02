@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Input, message, Upload, Switch } from "antd";
+import { Table, Button, Modal, Form, Input, message, Upload, Switch, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { UploadFile } from "antd/es/upload/interface";
 import { useRouter } from "next/navigation";
@@ -20,10 +20,19 @@ interface Project {
   lastPostedIndex?: number;
   updatedAt?: number;
   isActive: Boolean;
+  category: Object;
 }
-
+interface Category {
+  _id: string; // MongoDB thường dùng _id thay vì id
+  name: string;
+  description?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
 export default function ProjectForm() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -75,7 +84,6 @@ export default function ProjectForm() {
     }
   };
 
-
   const updateProject = async (id: string, updatedData: Partial<Project>) => {
     console.log("🚀 ~ updateProject ~ updatedData:", updatedData);
 
@@ -106,9 +114,25 @@ export default function ProjectForm() {
     }
   };
 
-
+  const fetchCategories = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/categories");
+      const data = await res.json();
+      if (data.success) {
+        setCategories(data.data);
+      } else {
+        message.error("Failed to fetch categories");
+      }
+    } catch (error) {
+      message.error("Error fetching categories");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     fetchProjects();
+    fetchCategories();
   }, []);
 
   // Define columns for the table
@@ -185,6 +209,7 @@ export default function ProjectForm() {
 
   // Submit handler for the form using FormData (multipart/form-data)
   const handleSubmit = async (values: any) => {
+    console.log("🚀 ~ handleSubmit ~ values:", values)
     try {
       const formData = new FormData();
       formData.append("name", values.name);
@@ -192,6 +217,11 @@ export default function ProjectForm() {
       formData.append("username", values.username);
       formData.append("password", values.password);
       formData.append("note", values.note || "");
+      if (values.projectType) {
+        formData.append("categories", values.projectType);
+      } else {
+        console.warn("⚠️ Missing projectType in values:", values);
+      }
 
       // Ensure file is appended correctly
       if (fileList.length > 0) {
@@ -201,6 +231,7 @@ export default function ProjectForm() {
         }
       }
 
+      console.log("🚀 ~ handleSubmit ~ formData:", formData)
       // Do not manually set content-type header so the browser can set it with the proper boundary.
       const res = await fetch("/api/projects", {
         method: "POST",
@@ -280,6 +311,19 @@ export default function ProjectForm() {
           </Form.Item>
           <Form.Item label="Note" name="note">
             <Input.TextArea />
+          </Form.Item>
+          <Form.Item
+            label="Project Type"
+            name="projectType"
+            rules={[{ required: true, message: "Please select a project type!" }]}
+          >
+            <Select placeholder="Select a project type" loading={loading}>
+              {categories.map((category) => (
+                <Select.Option key={category._id} value={category._id}>
+                  {category.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item label="Content File">
             <Upload
