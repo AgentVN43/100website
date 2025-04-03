@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const password = formData.get("password")?.toString();
     const note = formData.get("note")?.toString();
     const file = formData.get("file") as File | null;
-    const categories = formData.get("categories")?.toString() || null;
+    const category = formData.get("categories")?.toString() || null;
 
     let filePath: string | null = null;
 
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       note,
       content: filePath, // Save the file path (or null if no file)
       lastPostedIndex: 0,
-      categories,
+      category,
     });
     await newProject.save();
 

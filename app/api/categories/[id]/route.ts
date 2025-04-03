@@ -25,8 +25,6 @@ export async function GET(
   }
 }
 
-
-
 // PUT: Cập nhật category
 export async function PUT(
   req: Request,

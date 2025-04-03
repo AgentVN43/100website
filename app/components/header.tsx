@@ -9,7 +9,7 @@ export default function Header() {
                 <HomeOutlined /> Trang chủ
             </Link>
             <Link href={'/projects'} className='cursor-pointer py-3'>
-                <HomeOutlined /> Bài viết
+                <HomeOutlined /> Project
             </Link>
             <Link href={'/post'} className='cursor-pointer py-3'>
                 <HomeOutlined /> Bài viết SEO

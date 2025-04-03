@@ -33,7 +33,7 @@ const CategoryPage = () => {
 
   const handleAddOrEdit = async (values) => {
     try {
-      const url = editingCategory ? `/api/category/${editingCategory._id}` : "/api/categories";
+      const url = editingCategory ? `/api/categories/${editingCategory._id}` : "/api/categories";
       const method = editingCategory ? "PUT" : "POST";
 
       const res = await fetch(url, {
