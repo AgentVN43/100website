@@ -31,9 +31,9 @@ export default function ProjectDetails() {
   const params = useParams();
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
-  console.log("🚀 ~ ProjectDetails ~ project:", project)
+  console.log("🚀 ~ ProjectDetails ~ project:", project);
   const [jsonData, setJsonData] = useState<any[]>([]);
-  console.log("🚀 ~ ProjectDetails ~ jsonData:", jsonData)
+  console.log("🚀 ~ ProjectDetails ~ jsonData:", jsonData);
   const [loading, setLoading] = useState(true);
   const [jsonLoading, setJsonLoading] = useState(false);
 
@@ -92,19 +92,19 @@ export default function ProjectDetails() {
   const jsonColumns =
     jsonData.length > 0
       ? [
-        ...Object.keys(jsonData[0]).map((key) => ({
-          title: key.toUpperCase(),
-          dataIndex: key,
-          key: key,
-        })),
-        {
-          title: "Actions",
-          key: "actions",
-          render: (_: any, record: any, index: number) => (
-            <Button onClick={() => handleEdit(record, index)}>Edit</Button>
-          ),
-        },
-      ]
+          ...Object.keys(jsonData[0]).map((key) => ({
+            title: key.toUpperCase(),
+            dataIndex: key,
+            key: key,
+          })),
+          {
+            title: "Actions",
+            key: "actions",
+            render: (_: any, record: any, index: number) => (
+              <Button onClick={() => handleEdit(record, index)}>Edit</Button>
+            ),
+          },
+        ]
       : [];
 
   // Called when user clicks the Edit button
@@ -116,9 +116,10 @@ export default function ProjectDetails() {
   };
   const htmlContent = (() => {
     try {
-      const content = JSON.parse(editingContent)?.content || "Không có dữ liệu HTML";
+      const content =
+        JSON.parse(editingContent)?.content || "Không có dữ liệu HTML";
       // Loại bỏ markdown code block: ```html ... ```
-      return content.replace(/```html\s*([\s\S]*?)\s*```/, '$1');
+      return content.replace(/```html\s*([\s\S]*?)\s*```/, "$1");
     } catch (error) {
       console.error("Lỗi parse JSON:", error);
       return "JSON không hợp lệ";
@@ -158,7 +159,13 @@ export default function ProjectDetails() {
     }
   };
 
-  if (loading) return <div className="h-screen flex justify-center items-center"> <Spin /> </div>
+  if (loading)
+    return (
+      <div className="h-screen flex justify-center items-center">
+        {" "}
+        <Spin />{" "}
+      </div>
+    );
   if (!project) return <div>No project found.</div>;
 
   return (
@@ -166,10 +173,25 @@ export default function ProjectDetails() {
       <Button onClick={() => router.back()} style={{ marginBottom: "1rem" }}>
         Back
       </Button>
+      <Button
+        type="primary"
+        onClick={() =>
+          window.open(
+            `${project.domain}/wp-admin/admin.php?page=rank-math-status&view=tools#`,
+            "_blank"
+          )
+        }
+        disabled={!project.domain}
+        style={{ marginBottom: "20px" }}
+      >
+        Update Score
+      </Button>
       <Descriptions bordered column={1}>
         <Descriptions.Item label="Name">{project.name}</Descriptions.Item>
         <Descriptions.Item label="Domain">{project.domain}</Descriptions.Item>
-        <Descriptions.Item label="Username">{project.username}</Descriptions.Item>
+        <Descriptions.Item label="Username">
+          {project.username}
+        </Descriptions.Item>
         <Descriptions.Item label="Note">
           {project.note || "N/A"}
         </Descriptions.Item>
@@ -204,7 +226,7 @@ export default function ProjectDetails() {
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         onOk={handleSaveEdit}
-        width={'80vw'}
+        width={"80vw"}
         destroyOnClose
       >
         <Tabs defaultActiveKey="1">
@@ -224,7 +246,10 @@ export default function ProjectDetails() {
                     })()}
                     onChange={(e) => {
                       try {
-                        const updatedJson = { ...JSON.parse(editingContent), title: e.target.value };
+                        const updatedJson = {
+                          ...JSON.parse(editingContent),
+                          title: e.target.value,
+                        };
                         setEditingContent(JSON.stringify(updatedJson, null, 2));
                       } catch {
                         message.error("Invalid JSON format");
@@ -244,7 +269,10 @@ export default function ProjectDetails() {
                     })()}
                     onChange={(e) => {
                       try {
-                        const updatedJson = { ...JSON.parse(editingContent), status: e.target.value };
+                        const updatedJson = {
+                          ...JSON.parse(editingContent),
+                          status: e.target.value,
+                        };
                         setEditingContent(JSON.stringify(updatedJson, null, 2));
                       } catch {
                         message.error("Invalid JSON format");
@@ -266,18 +294,18 @@ export default function ProjectDetails() {
                 })()}
                 onChange={(e) => {
                   try {
-                    const updatedJson = { ...JSON.parse(editingContent), content: e.target.value };
+                    const updatedJson = {
+                      ...JSON.parse(editingContent),
+                      content: e.target.value,
+                    };
                     setEditingContent(JSON.stringify(updatedJson, null, 2));
                   } catch {
                     message.error("Invalid JSON format");
                   }
                 }}
               />
-
-
             </div>
           </Tabs.TabPane>
-
 
           {/* Tab 2: Hiển thị HTML */}
           <Tabs.TabPane tab="Rendered HTML" key="2">
@@ -288,8 +316,6 @@ export default function ProjectDetails() {
               }}
             />
           </Tabs.TabPane>
-
-
         </Tabs>
       </Modal>
     </div>

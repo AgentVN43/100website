@@ -22,7 +22,7 @@ export default function Media({
   const fetchMedia = async (page = 1, append = false) => {
     setLoading(true);
     try {
-      const url = `${domain}/wp-json/wp/v2/media?_fields=id,guid.rendered&page=${page}`;
+      const url = `${domain}/wp-json/wp/v2/media?_fields=id,guid.rendered&per_page=50`;
       const authHeader =
         "Basic " + btoa(`${credentials.username}:${credentials.password}`);
       const res = await fetch(url, {
