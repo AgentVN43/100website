@@ -30,9 +30,11 @@ export default function DetailPost() {
   const [score, setScore] = useState(0);
   const [isCodeView, setIsCodeView] = useState(false);
   const [currentFeaturedMedia, setCurrentFeaturedMedia] = useState(null);
+  console.log("🚀 ~ DetailPost ~ currentFeaturedMedia:", currentFeaturedMedia)
 
   const [isMediaVisible, setIsMediaVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  console.log("🚀 ~ DetailPost ~ selectedImage:", selectedImage)
 
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState([]);
@@ -53,7 +55,7 @@ export default function DetailPost() {
   const fetchPost = async (page = 1) => {
     setLoading(true);
     try {
-      const url = `${domain}/wp-json/wp/v2/posts/${selectedId}?_fields=title,content,slug,meta.rank_math_focus_keyword,meta.rank_math_seo_score`;
+      const url = `${domain}/wp-json/wp/v2/posts/${selectedId}?_fields=title,content,slug,meta.rank_math_focus_keyword,meta.rank_math_seo_score,featured_media`;
       const authHeader =
         "Basic " + btoa(`${credentials.username}:${credentials.password}`);
       const res = await fetch(url, {
@@ -68,6 +70,7 @@ export default function DetailPost() {
       }
 
       const data = await res.json();
+      console.log("🚀 ~ fetchPost ~ data:", data)
       setPost(data);
       setTitle(data.title?.rendered);
       setContent(data.content?.rendered);
@@ -75,6 +78,24 @@ export default function DetailPost() {
       setKeyword(data.meta?.rank_math_focus_keyword || "");
       setScore(data.meta?.rank_math_seo_score || 0);
       setCurrentFeaturedMedia(data.featured_media);
+
+      // Fetch thông tin chi tiết của hình ảnh (thumbnail)
+      if (data.featured_media) {
+        const mediaRes = await fetch(
+          `${domain}/wp-json/wp/v2/media/${data.featured_media}`,
+          {
+            headers: {
+              Authorization: authHeader,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (mediaRes.ok) {
+          const mediaData = await mediaRes.json();
+          setSelectedImage({ id: data.featured_media, url: mediaData.source_url }); // Lưu URL hình ảnh thumbnail
+        }
+      }
+
       setPagination((prev) => ({
         ...prev,
         total: parseInt(res.headers.get("X-WP-Total") || "0"),
@@ -142,74 +163,70 @@ export default function DetailPost() {
   };
 
   console.log(selectedImage)
-
+  const [isVisual, setIsVisual] = useState(true); // Trạng thái: Trực quan hay Văn bản
   return (
     <div>
       <Layout style={{ minHeight: "100vh" }}>
-        <Content style={{ flex: 7, padding: "20px", background: "#fff" }}>
-          <Title level={3}>{title}</Title>
-          <Input
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ marginBottom: "10px" }}
-          />
-          <Input
-            placeholder="Slug"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            style={{ marginBottom: "10px" }}
-          />
-          <Switch
-            checked={isCodeView}
-            onChange={() => setIsCodeView(!isCodeView)}
-            style={{ marginBottom: "10px" }}
-          />{" "}
-          Toggle Code View
-          {isCodeView ? (
-            <pre
-              style={{
-                padding: "10px",
-                background: "#f5f5f5",
-                minHeight: "150px",
-              }}
-            >
-              {content}
-            </pre>
-          ) : (
-            <div
-              style={{
-                padding: "10px",
-                background: "#fff",
-                minHeight: "150px",
-                border: "1px solid #d9d9d9",
-              }}
-              dangerouslySetInnerHTML={{ __html: content }}
+        <Content style={{ flex: 7, padding: "20px", background: "#fff" }} className="relative !pt-36">
+          <div className="fixed bg-white top-12 left-32 right-[432px] mx-4 px-3 pt-2 z-10">
+            {/* <Title level={3}>{title}</Title> */}
+            <Input
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={{ marginBottom: "10px" }}
             />
-          )}
-          <TextArea
-            rows={6}
-            placeholder="Content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            style={{ marginBottom: "10px" }}
-          />
-          <Input
-            placeholder="Keyword"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            style={{ marginBottom: "10px" }}
-          />
-          <Button
-            type="primary"
-            onClick={handleSave}
-            style={{ marginTop: "10px" }}
-          >
-            Lưu
-          </Button>
+            <Input
+              placeholder="Slug"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              style={{ marginBottom: "10px" }}
+            />
+
+            <div className="flex text-center justify-center gap-3 mb-3">
+              {/* Nút chuyển đổi */}
+              <Button color="default" variant="solid" onClick={() => setIsVisual(!isVisual)}>
+                {isVisual ? "Văn bản" : "Trực quan"}
+              </Button>
+              <Input
+                placeholder="Keyword"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
+              <Button
+                type="primary"
+                onClick={handleSave}
+              >
+                Lưu
+              </Button>
+            </div>
+          </div>
+          <div>
+            {isVisual ? (
+              <div
+                style={{
+                  padding: "10px",
+                  background: "#fff",
+                  minHeight: "150px",
+                  border: "1px solid #d9d9d9",
+                }}
+                className="rounded-md"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            ) : (
+
+              <TextArea
+                autoSize
+                placeholder="Content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                style={{ marginBottom: "10px" }}
+              />
+            )}
+          </div>
         </Content>
 
-        <Sider width={300} style={{ padding: "20px", background: "#fafafa" }}>
+        <Sider className="!sticky top-12 z-10 h-[600px] shadow-sm rounded-xl" width={300} style={{ padding: "20px", background: "#ededed" }}>
           <Title level={4}>Checklist</Title>
           <p>Điểm SEO: {score}/100</p>
           <Checkbox checked={keywordInTitle}>
@@ -236,7 +253,7 @@ export default function DetailPost() {
           <Checkbox checked={contentLengthValid}>
             {contentLengthValid
               ? `✅ Nội dung hiện có độ dài là ${wordCount} từ.`
-              : `❌ Nội dung hiện có độ dài là ${wordCount} từ. Hãy cân nhắc viết ít nhất 600 từ để tối ưu hóa.`}
+              : `❌ Nội dung hiện có độ dài là ${wordCount} từ. Hãy cân n hắc viết ít nhất 600 từ để tối ưu hóa.`}
           </Checkbox>
           <Button
             type="default"
@@ -247,8 +264,7 @@ export default function DetailPost() {
           </Button>
 
           {selectedImage && (
-            <div>
-              <p>Ảnh đã chọn ID: {selectedImage.id}</p>
+            <div className="flex justify-center pt-4">
               <img
                 src={selectedImage.url}
                 alt="Selected"

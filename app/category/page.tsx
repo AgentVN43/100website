@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Form, Input, message } from "antd";
+import { useRouter } from "next/navigation";
 
 const CategoryPage = () => {
   const [categories, setCategories] = useState([]);
@@ -9,6 +10,8 @@ const CategoryPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [form] = Form.useForm();
+
+  const router = useRouter()
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -31,7 +34,7 @@ const CategoryPage = () => {
     fetchCategories();
   }, []);
 
-  const handleAddOrEdit = async (values) => {
+  const handleAddOrEdit = async (values: any) => {
     try {
       const url = editingCategory ? `/api/categories/${editingCategory._id}` : "/api/categories";
       const method = editingCategory ? "PUT" : "POST";
@@ -57,7 +60,7 @@ const CategoryPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: any) => {
     try {
       const res = await fetch(`/api/categories/${id}`, { method: "DELETE" });
       const data = await res.json();
@@ -78,19 +81,27 @@ const CategoryPage = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <>
           <Button
             type="link"
-            onClick={() => {
+            onClick={(e) => {
               setEditingCategory(record);
               setModalVisible(true);
               form.setFieldsValue(record);
+              e.stopPropagation();
             }}
           >
             Edit
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record._id)}>
+          <Button
+            type="link"
+            danger
+            onClick={(e) => {
+              handleDelete(record._id);
+              e.stopPropagation();
+            }}
+          >
             Delete
           </Button>
         </>
@@ -103,7 +114,16 @@ const CategoryPage = () => {
       <Button type="primary" onClick={() => setModalVisible(true)} style={{ marginBottom: 20 }}>
         Add Category
       </Button>
-      <Table dataSource={categories} columns={columns} rowKey="_id" loading={loading} />
+      <Table
+        dataSource={categories}
+        columns={columns}
+        rowKey="_id"
+        loading={loading}
+        onRow={(record) => ({
+          onClick: () => router.push(`/category/${record._id}`),
+          style: { cursor: "pointer" },
+        })}
+      />
 
       <Modal
         title={editingCategory ? "Edit Category" : "Add Category"}

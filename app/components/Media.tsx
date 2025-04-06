@@ -20,51 +20,6 @@ export default function Media({
   });
 
   console.log(domain)
-
-  // const fetchMedia = async (page = 1, append = false) => {
-  //   setLoading(true);
-  //   try {
-  //     const url = `${domain}/wp-json/wp/v2/media?_fields=id,guid.rendered&per_page=50`;
-  //     const authHeader =
-  //       "Basic " + btoa(`${credentials.username}:${credentials.password}`);
-  //     const res = await fetch(url, {
-  //       headers: {
-  //         Authorization: authHeader,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! status: ${res.status}`);
-  //     }
-
-  //     const data = await res.json();
-
-  //     if (!Array.isArray(data)) {
-  //       console.error("API trả về không phải mảng:", data);
-  //       setMedia([]); // Đảm bảo media luôn là mảng
-  //       return;
-  //     }
-
-  //     const images = data.map((item) => ({
-  //       id: item.id,
-  //       url: item.guid.rendered,
-  //     }));
-
-  //     setMedia((prev) => (append ? [...prev, ...images] : images)); // Nối dữ liệu mới
-  //     setPagination((prev) => ({
-  //       ...prev,
-  //       current: page,
-  //       total: parseInt(res.headers.get("X-WP-Total") || "0"),
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error fetching posts:", error);
-  //     message.error("Failed to load posts");
-  //     setMedia([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const fetchMedia = async (page = 1, append = false) => {
     setLoading(true);
     try {
