@@ -18,41 +18,39 @@ export default function Media({
     pageSize: 10,
     total: 0,
   });
-
-  console.log(domain)
   const fetchMedia = async (page = 1, append = false) => {
     setLoading(true);
     try {
       const url = `${domain}/wp-json/wp/v2/media?_fields=id,source_url&page=${page}&per_page=50`;
       const authHeader =
         "Basic " + btoa(`${credentials.username}:${credentials.password}`);
-  
+
       const res = await fetch(url, {
         headers: {
           Authorization: authHeader,
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-  
+
       const data = await res.json();
-  
+
       if (!Array.isArray(data)) {
         console.error("API không trả về mảng:", data);
         setMedia([]);
         return;
       }
-  
+
       const images = data.map((item) => ({
         id: item.id,
         url: item.source_url, // ✅ Dùng source_url để đảm bảo ảnh đúng domain
       }));
-  
+
       setMedia((prev) => (append ? [...prev, ...images] : images));
-  
+
       setPagination((prev) => ({
         ...prev,
         current: page,
@@ -66,7 +64,6 @@ export default function Media({
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     fetchMedia(1);
@@ -86,8 +83,8 @@ export default function Media({
       width={1000}
       height={600}
       bodyStyle={{
-        overflowY: 'auto', // Add this line to enable vertical scrolling
-        maxHeight: 'calc(100vh - 200px)', // Adjust this based on your modal's size, this ensures scroll only happens within the modal content
+        overflowY: "auto", // Add this line to enable vertical scrolling
+        maxHeight: "calc(100vh - 200px)", // Adjust this based on your modal's size, this ensures scroll only happens within the modal content
       }}
     >
       <h2 className="">Chọn ảnh</h2>
