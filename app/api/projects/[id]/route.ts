@@ -6,6 +6,7 @@ import Project from '../../../db/models/Project';
 export const runtime = 'nodejs';
 
 export async function GET(
+  request: Request,
   context: { params: Promise<{ id: string }> } // Định nghĩa params là Promise
 ) {
   const { id } = await context.params; // Đợi params resolve trước khi sử dụng
@@ -43,6 +44,7 @@ export async function PUT(
 }
 
 export async function DELETE(
+  request: Request,
   context: { params: Promise<{ id: string }> } // Định nghĩa params là Promise
 ) {
   const { id } = await context.params; // Đợi params resolve trước khi sử dụng

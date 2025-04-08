@@ -177,24 +177,9 @@ export default function ProjectDetails() {
 
   return (
     <div style={{ padding: "1rem" }}>
-      <div className="flex justify-between">
-        <Button onClick={() => router.back()} style={{ marginBottom: "1rem" }}>
-          Back
-        </Button>
-        <Button
-          type="primary"
-          onClick={() =>
-            window.open(
-              `${project.domain}/wp-admin/admin.php?page=rank-math-status&view=tools#`,
-              "_blank"
-            )
-          }
-          disabled={!project.domain}
-          style={{ marginBottom: 20 }}
-        >
-          Update Score
-        </Button>
-      </div>
+      <Button onClick={() => router.back()} style={{ marginBottom: "1rem" }}>
+        Back
+      </Button>
 
       <Descriptions bordered column={1}>
         {[

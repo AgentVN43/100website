@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
 import connectDB from "../../../../db/config";
 import Project from "../../../../db/models/Project";
-type tParams = Promise<{ id: string[] }>;
-  
-export async function GET({ params }: { params: tParams }) {
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   await connectDB();
-
-  const { id } = await params;
-
   try {
-    const projects = await Project.find({ category: id });
+    const projects = await Project.find({ category: params.id });
 
     return NextResponse.json({
-      success: true,
+      success: true,  
       data: projects,
     });
   } catch (error) {
