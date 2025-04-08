@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import connectDB from '../../../../db/config';
 import Project from '../../../../db/models/Project';
 import fs from 'fs';
@@ -7,7 +7,7 @@ import path from 'path';
 export const runtime = 'nodejs';
 
 export async function PUT(
-  request: NextRequest,
+  request: Request,
   context: { params: { id: string } }
 ) {
   const { id } = context.params;

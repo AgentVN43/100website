@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import connectDB from "../../../db/config";
 import Category from "../../../db/models/Categories";
 
 // GET: Lấy thông tin chi tiết của category theo ID
 export async function GET(
-  req: NextRequest,
   context: { params: { id: string } }
 ) {
   await connectDB();
@@ -30,7 +29,7 @@ export async function GET(
 
 // PUT: Cập nhật category
 export async function PUT(
-  req: NextRequest,
+  req: Request,
   context: { params: { id: string } }
 ) {
   await connectDB();
@@ -54,7 +53,6 @@ export async function PUT(
 
 // DELETE: Xóa category
 export async function DELETE(
-  req: NextRequest,
   context: { params: { id: string } }
 ) {
   await connectDB();
