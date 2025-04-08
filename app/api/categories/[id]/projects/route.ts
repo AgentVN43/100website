@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import connectDB from "../../../../db/config";
 import Project from "../../../../db/models/Project";
-
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+type tParams = Promise<{ id: string[] }>;
+  
+export async function GET({ params }: { params: tParams }) {
   await connectDB();
 
-  const { id } = await  params;
+  const { id } = await params;
 
   try {
     const projects = await Project.find({ category: id });
