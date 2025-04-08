@@ -4,7 +4,7 @@ import Project from "../../../../db/models/Project";
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { [key: string]: string } }
 ) {
   await connectDB();
 
