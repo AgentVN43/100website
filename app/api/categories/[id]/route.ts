@@ -1,15 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "../../../db/config";
 import Category from "../../../db/models/Categories";
 
 // GET: Lấy thông tin chi tiết của category theo ID
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
   await connectDB();
+
+  const { id } = context.params;
+
   try {
-    const category = await Category.findById(params.id);
+    const category = await Category.findById(id);
     if (!category) {
       return NextResponse.json(
         { success: false, error: "Category not found" },
@@ -27,19 +30,23 @@ export async function GET(
 
 // PUT: Cập nhật category
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
   await connectDB();
+
+  const { id } = context.params;
+
   try {
     const body = await req.json();
-    const updatedCategory = await Category.findByIdAndUpdate(params.id, body, {
+    const updatedCategory = await Category.findByIdAndUpdate(id, body, {
       new: true,
     });
+
     return NextResponse.json({ success: true, data: updatedCategory });
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: "Failed to update category" },
+      { success: false, error: 'Failed to update category' },
       { status: 500 }
     );
   }
@@ -47,19 +54,23 @@ export async function PUT(
 
 // DELETE: Xóa category
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
   await connectDB();
+
+  const { id } = context.params;
+
   try {
-    await Category.findByIdAndDelete(params.id);
+    await Category.findByIdAndDelete(id);
+
     return NextResponse.json({
       success: true,
-      message: "Category deleted successfully",
+      message: 'Category deleted successfully',
     });
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: "Failed to delete category" },
+      { success: false, error: 'Failed to delete category' },
       { status: 500 }
     );
   }
