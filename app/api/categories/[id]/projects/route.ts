@@ -3,12 +3,11 @@ import connectDB from "../../../../db/config";
 import Project from "../../../../db/models/Project";
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string | string[] } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
-  const { id } = params;
+  const { id } = await  params;
 
   try {
     const projects = await Project.find({ category: id });

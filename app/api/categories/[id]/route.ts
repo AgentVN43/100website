@@ -4,11 +4,11 @@ import Category from "../../../db/models/Categories";
 
 // GET: Lấy thông tin chi tiết của category theo ID
 export async function GET(
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
-  const { id } = context.params;
+  const { id } = await context.params;
 
   try {
     const category = await Category.findById(id);
@@ -30,11 +30,11 @@ export async function GET(
 // PUT: Cập nhật category
 export async function PUT(
   req: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
-  const { id } = context.params;
+  const { id } = await context.params;
 
   try {
     const body = await req.json();
@@ -53,11 +53,11 @@ export async function PUT(
 
 // DELETE: Xóa category
 export async function DELETE(
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
-  const { id } = context.params;
+  const { id } = await context.params;
 
   try {
     await Category.findByIdAndDelete(id);
