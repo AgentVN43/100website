@@ -114,7 +114,7 @@ export default function DetailPost() {
       message.error("Không có ID được chọn!");
       return;
     }
-
+    setLoading(true);
     const body = {
       title: title,
       content: content,
@@ -143,13 +143,15 @@ export default function DetailPost() {
       );
 
       if (response.ok) {
-        message.success("Cập nhật thành công!");
+          alert("Cập nhật thành công!");
       } else {
         message.error("Cập nhật thất bại!");
       }
     } catch (error) {
       console.error("Lỗi khi gửi request:", error);
       message.error("Lỗi kết nối đến server!");
+    } finally {
+      setLoading(false); // ✅ Kết thúc loading
     }
   };
 
@@ -196,6 +198,7 @@ export default function DetailPost() {
               <Button
                 type="primary"
                 onClick={handleSave}
+                loading={loading}
               >
                 Lưu
               </Button>

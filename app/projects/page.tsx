@@ -66,7 +66,33 @@ export default function ProjectForm() {
       const res = await fetch("/api/projects");
       const data = await res.json();
       if (data.success) {
-        setProjects(data.data);
+        console.log("🚀 ~ fetchProjects ~ data.success:", data.success)
+        const projectsWithLength = await Promise.all(
+            data.data.map(async (project: any) => {
+                console.log("🚀 ~ data.data.map ~ project:", project)
+                let contentLength = 0;
+                if (project.content) {
+                    try {
+                        const fileRes = await fetch(project.content);
+                        const fileData = await fileRes.json();
+                        console.log("🚀 ~ data.data.map ~ fileData:", fileData)
+                        if (Array.isArray(fileData)) {
+                            contentLength = fileData.length;
+                        }
+                    } catch (err) {
+                        console.error("Failed to fetch content file:", err);
+                    }
+                }
+
+                return {
+                    ...project,
+                    contentLength,
+                };
+            })
+        );
+        console.log("🚀 ~ fetchProjects ~ projectsWithLength:", projectsWithLength)
+
+        setProjects(projectsWithLength);
       } else {
         message.error(data.error || "Failed to load projects.");
       }
@@ -161,7 +187,13 @@ export default function ProjectForm() {
     { title: "Domain", dataIndex: "domain", key: "domain" },
     { title: "Username", dataIndex: "username", key: "username" },
     { title: "Note", dataIndex: "note", key: "note" },
-    { title: "Last Posted Index", dataIndex: "lastPostedIndex", key: "lastPostedIndex" },
+    {
+      title: "Last Posted Index",
+      dataIndex: "lastPostedIndex",
+      key: "lastPostedIndex",
+      render: (_, record) =>
+          `${record.lastPostedIndex} / ${record.contentLength ?? "?"}`,
+  },
     {
       title: "Content",
       dataIndex: "content",
