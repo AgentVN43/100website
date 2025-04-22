@@ -76,8 +76,15 @@ const CategoryPage = () => {
   };
 
   const columns = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_: any, __: any, index: number) => <p>{index + 1}</p>,
+    },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Description", dataIndex: "description", key: "description" },
+    { title: "Quantity", dataIndex: "quantity", key: "quantity" },
     {
       title: "Actions",
       key: "actions",
