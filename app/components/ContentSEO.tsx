@@ -46,13 +46,34 @@ export default function ContentSEO() {
 
   const [selectedId, setSelectedId] = useState(null);
 
+  // const fetchProjects = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("/api/projects");
+  //     const data = await res.json();
+  //     if (data.success) {
+  //       setProjects(data.data);
+  //     } else {
+  //       message.error(data.error || "Failed to load projects.");
+  //     }
+  //   } catch (error) {
+  //     message.error("Error fetching projects.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchProjects = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/projects");
       const data = await res.json();
       if (data.success) {
-        setProjects(data.data);
+        // ✅ loại trùng ngay từ data.data
+        const uniqueProjects = [
+          ...new Map(data.data.map((item) => [item.domain, item])).values(),
+        ];
+        setProjects(uniqueProjects as Project[]);;
       } else {
         message.error(data.error || "Failed to load projects.");
       }
@@ -132,7 +153,7 @@ export default function ContentSEO() {
   //   console.log(selectedId);
   // };
 
-  console.log(post);
+  console.log(projects);
 
   const columns = [
     {
