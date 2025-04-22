@@ -4,9 +4,12 @@ import Link from 'next/link';
 
 export default function Header() {
     return (
-        <div className='fixed flex justify-center gap-4 bg-white w-full top-0 right-0 z-10'>
+        <div className='fixed flex justify-center gap-4 bg-amber-50 w-full top-0 right-0 z-10'>
             <Link href={'/'} className='cursor-pointer py-3'>
                 <HomeOutlined /> Trang chủ
+            </Link>
+            <Link href={'/category'} className='cursor-pointer py-3'>
+                <HomeOutlined /> Danh mục
             </Link>
             <Link href={'/projects'} className='cursor-pointer py-3'>
                 <HomeOutlined /> Project
@@ -16,9 +19,6 @@ export default function Header() {
             </Link>
             <Link href={'/reports'} className='cursor-pointer py-3'>
                 <HomeOutlined /> Báo cáo
-            </Link>
-            <Link href={'/category'} className='cursor-pointer py-3'>
-                <HomeOutlined /> Danh mục
             </Link>
         </div>
     )

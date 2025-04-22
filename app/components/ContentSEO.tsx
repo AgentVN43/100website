@@ -206,9 +206,26 @@ export default function ContentSEO() {
           </Option>
         ))}
       </Select>
-      <Button type="primary" onClick={() => fetchPost(1)} loading={loading}>
-        Fetch Posts
-      </Button>
+
+      <div className="flex justify-between">
+        <Button type="primary" onClick={() => fetchPost(1)} loading={loading}>
+          Fetch Posts
+        </Button>
+
+        <Button
+          type="primary"
+          onClick={() =>
+            window.open(
+              `${domain}/wp-admin/admin.php?page=rank-math-status&view=tools#`,
+              "_blank"
+            )
+          }
+          disabled={!domain}
+          style={{ marginBottom: 20 }}
+        >
+          Update Score
+        </Button>
+      </div>
       <Table
         dataSource={post}
         columns={columns}

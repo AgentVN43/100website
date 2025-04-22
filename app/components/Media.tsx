@@ -18,55 +18,10 @@ export default function Media({
     pageSize: 10,
     total: 0,
   });
-
-  // const fetchMedia = async (page = 1, append = false) => {
-  //   setLoading(true);
-  //   try {
-  //     const url = `${domain}/wp-json/wp/v2/media?_fields=id,guid.rendered&per_page=50`;
-  //     const authHeader =
-  //       "Basic " + btoa(`${credentials.username}:${credentials.password}`);
-  //     const res = await fetch(url, {
-  //       headers: {
-  //         Authorization: authHeader,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! status: ${res.status}`);
-  //     }
-
-  //     const data = await res.json();
-
-  //     if (!Array.isArray(data)) {
-  //       console.error("API trả về không phải mảng:", data);
-  //       setMedia([]); // Đảm bảo media luôn là mảng
-  //       return;
-  //     }
-
-  //     const images = data.map((item) => ({
-  //       id: item.id,
-  //       url: item.guid.rendered,
-  //     }));
-
-  //     setMedia((prev) => (append ? [...prev, ...images] : images)); // Nối dữ liệu mới
-  //     setPagination((prev) => ({
-  //       ...prev,
-  //       current: page,
-  //       total: parseInt(res.headers.get("X-WP-Total") || "0"),
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error fetching posts:", error);
-  //     message.error("Failed to load posts");
-  //     setMedia([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const fetchMedia = async (page = 1, append = false) => {
     setLoading(true);
     try {
-      const url = `${domain}/wp-json/wp/v2/media?_fields=id,source_url&page=${page}&per_page=50`;
+      const url = `${domain}/wp-json/wp/v2/media?_fields=id,source_url&page=${page}&per_page=100`;
       const authHeader =
         "Basic " + btoa(`${credentials.username}:${credentials.password}`);
 
@@ -125,7 +80,7 @@ export default function Media({
       open={visible}
       onCancel={onClose}
       footer={null}
-      width={1000}
+      width={1280}
       height={600}
       bodyStyle={{
         overflowY: "auto", // Add this line to enable vertical scrolling
@@ -133,21 +88,27 @@ export default function Media({
       }}
     >
       <h2 className="">Chọn ảnh</h2>
-      <div className="grid grid-cols-4 gap-3">
-        {media.map((image) => (
-          <img
-            key={image.id}
-            src={image.url}
-            alt="Media"
-            style={{
-              width: "100%",
-              cursor: "pointer",
-              objectFit: "cover",
-              borderRadius: "5px",
-            }}
-            onClick={() => onSelectImage(image.id, image.url)}
-          />
-        ))}
+      <div className="grid grid-cols-10 gap-3">
+        {media.map((image) => {
+          const fileName = image.url.split("/").pop(); // Lấy phần cuối URL là tên file
+
+          return (
+            <img
+              key={image.id}
+              src={image.url}
+              alt={fileName}
+              title={fileName}
+              className="transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+              style={{
+                width: "100%",
+                cursor: "pointer",
+                objectFit: "cover",
+                borderRadius: "5px",
+              }}
+              onClick={() => onSelectImage(image.id, image.url)}
+            />
+          );
+        })}
       </div>
 
       {pagination.current * pagination.pageSize < pagination.total && (

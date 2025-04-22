@@ -8,7 +8,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     const projects = await Project.find({ category: params.id });
 
     return NextResponse.json({
-      success: true,
+      success: true,  
       data: projects,
     });
   } catch (error) {
