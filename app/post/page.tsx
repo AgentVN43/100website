@@ -173,6 +173,8 @@ export default function Post() {
     },
   ];
 
+  console.log(projects);
+
   return (
     <div style={{ padding: "20px" }}>
       <Select
@@ -180,11 +182,10 @@ export default function Post() {
         style={{ width: "100%", marginBottom: "20px" }}
         onChange={handleChange}
         loading={loading}
-        // Hiển thị giá trị từ sessionStorage, nếu có
-        value={JSON.parse(sessionStorage.getItem("domain") || '""')}
+        value={domain || undefined}
       >
         {projects.map((item) => (
-          <Option key={item.domain} value={item.domain}>
+          <Option key={item._id} value={item.domain}>
             {item.domain}
           </Option>
         ))}
